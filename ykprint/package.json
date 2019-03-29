@@ -1,6 +1,6 @@
 {
   "name": "react-native-yk-bt-print",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "激荡蓝牙打印模块",
   "main": "index.js",
   "scripts": {
