@@ -1,6 +1,8 @@
 package com.yiako.ykprint.template;
 
 
+import android.util.Log;
+
 import com.blankj.utilcode.util.ToastUtils;
 import com.dascom.print.ESCPOS;
 import com.yiako.ykprint.bt.CanvasUtils;
@@ -44,7 +46,9 @@ public class PrintTemplate1 {
                     drawBox(utils);
 //					drawVerticalSeparator(iPrinter);
                     drawRowContent(utils, list.get(i));
+                    Log.d("Tag","打印开始");
                     boolean b = escpos.printBitmapBlackWhite(utils.getBitmap(), 14, 0);
+                    Log.d("Tag","打印结束");
                     if(b){
                         ToastUtils.showShort("打印成功！");
                     }else{
@@ -63,7 +67,7 @@ public class PrintTemplate1 {
 
         utils.drawText(top_left_x, top_left_y, bottom_right_x,
                 top_left_y + row_height[0], "入库装箱单",
-                32, CanvasUtils.PAlign.ALIGN_CENTER, 0);
+                32, CanvasUtils.PAlign.ALIGN_CENTER, 1);
 
         utils.drawText(top_left_x, top_left_y + row_height[0], bottom_right_x,
                 top_left_y + row_height[0] + row_height[1], " 箱号：",
@@ -73,7 +77,7 @@ public class PrintTemplate1 {
                 top_right_x, top_left_y + row_height[0] + row_height[1], printData1.getTray_serlno());
 
         utils.drawText(top_left_x, top_left_y + row_height[0] + row_height[1], area_start_x_3_3,
-                top_left_y + row_height[1] + row_height[0] * 2, " 条码：" + printData1.getBarcode(),
+                top_left_y + row_height[1] + row_height[0] * 2, "商家编码：" + printData1.getBarcode(),
                 24, CanvasUtils.PAlign.ALIGN_LEFT, 0);
 
         utils.drawText(area_start_x_3_3, top_left_y + row_height[1] + row_height[0],

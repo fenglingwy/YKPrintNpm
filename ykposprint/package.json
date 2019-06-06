@@ -1,7 +1,7 @@
 {
-  "name": "react-native-yk-bt-print",
-  "version": "1.0.13",
-  "description": "激荡蓝牙打印模块",
+  "name": "react-native-yk-pos-print",
+  "version": "1.0.4",
+  "description": "激荡pos打印模块",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

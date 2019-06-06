@@ -6,7 +6,11 @@ import com.dascom.print.ESCPOS;
 import com.yiako.ykprint.bt.CanvasUtils;
 import com.yiako.ykprint.entity.PrintData2;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class PrintTemplate2 {
     private ESCPOS escpos;
@@ -34,14 +38,30 @@ public class PrintTemplate2 {
     }
 
     public final void doPrint(List<PrintData2> list) {
+        if (list.size() == 0) return;
 
         new Thread() {
             public void run() {
-                for (int idx = 0; idx < list.size(); idx++) {
-                    page_height = 46 * MULTIPLE;
-                    PrintData2 printData = list.get(idx);
-                    List<PrintData2.TraySowDtlsBean> traySowDtls = printData.getTraySowDtls();
-                    for (int i = 0; i < 1; i++) {
+
+                for(int i=0 ;i<list.size() ;i++){
+                    TreeMap<String, ArrayList<PrintData2.TraySowDtlsBean>> map = new TreeMap<>();
+                    PrintData2 data = list.get(i);
+                    for (PrintData2.TraySowDtlsBean item : data.getTraySowDtls()) {
+                        String zone_id = item.getZone_id();
+                        if (map.containsKey(zone_id)) {
+                            map.get(zone_id).add(item);
+                        } else {
+                            ArrayList<PrintData2.TraySowDtlsBean> arrayList = new ArrayList<>();
+                            arrayList.add(item);
+                            map.put(zone_id, arrayList);
+                        }
+                    }
+
+                    for (Map.Entry<String, ArrayList<PrintData2.TraySowDtlsBean>> entry : map.entrySet()) {
+                        page_height = 52 * MULTIPLE;
+
+                        List<PrintData2.TraySowDtlsBean> traySowDtls = entry.getValue();
+
                         for (int lines = 0; lines < traySowDtls.size(); lines++) {
                             page_height += row_height[0];
                         }
@@ -52,7 +72,7 @@ public class PrintTemplate2 {
                         CanvasUtils utils = new CanvasUtils(page_width, page_height);
                         drawBox(utils, traySowDtls.size());
                         drawVerticalSeparator(utils);
-                        drawRowContent(utils, printData);
+                        drawRowContent(utils, data, traySowDtls);
 
 
                         boolean b = escpos.printBitmapBlackWhite(utils.getBitmap(), 0, 0);
@@ -63,11 +83,13 @@ public class PrintTemplate2 {
                         }
                     }
                 }
+
+
             }
         }.start();
     }
 
-    private void drawRowContent(CanvasUtils utils, PrintData2 printData) {
+    private void drawRowContent(CanvasUtils utils, PrintData2 printData, List<PrintData2.TraySowDtlsBean> traySowDtls) {
         int area_start_x_4_1 = top_left_x;
         int area_start_x_4_2 = top_left_x + (top_right_x - top_left_x) / 4;
         int area_start_x_4_3 = top_left_x + (top_right_x - top_left_x) / 2;
@@ -79,62 +101,66 @@ public class PrintTemplate2 {
 
         utils.drawText(top_left_x, top_left_y, bottom_right_x,
                 top_left_y + row_height[0], "箱分货清单",
-                32, CanvasUtils.PAlign.ALIGN_CENTER, 0);
+                32, CanvasUtils.PAlign.ALIGN_CENTER, 1);
 
         utils.drawText(top_left_x, top_left_y + row_height[0], top_right_x,
-                top_left_y + row_height[0] * 2, "商品编码：" + printData.getBarcode(),
+                top_left_y + row_height[0] * 2, "箱号：" + printData.getCase_num_id(),
                 24, CanvasUtils.PAlign.ALIGN_LEFT, 0);
 
-        utils.drawText(top_left_x, top_left_y + row_height[0] * 2, top_right_x,
-                top_left_y + row_height[0] * 3, "商家商品编码：" + printData.getItemid(),
+        utils.drawText(top_left_x, top_left_y + row_height[0]*2, top_right_x,
+                top_left_y + row_height[0] * 3, "商品编码：" + printData.getBarcode(),
                 24, CanvasUtils.PAlign.ALIGN_LEFT, 0);
 
-        utils.drawText(area_start_x_4_1, top_left_y + row_height[0] * 3, area_start_x_4_3,
-                top_left_y + row_height[0] * 4, "类型：" + printData.getType_name(),
+        utils.drawText(top_left_x, top_left_y + row_height[0] * 3, top_right_x,
+                top_left_y + row_height[0] * 4, "商家商品编码：" + printData.getItemid(),
                 24, CanvasUtils.PAlign.ALIGN_LEFT, 0);
 
-        utils.drawText(area_start_x_4_3 + 4, top_left_y + row_height[0] * 3, top_right_x,
-                top_left_y + row_height[0] * 4, "余量：" + printData.getLast_qty(),
+        utils.drawText(area_start_x_4_1, top_left_y + row_height[0] * 4, area_start_x_4_3,
+                top_left_y + row_height[0] * 5, "类型：" + printData.getType_name(),
+                24, CanvasUtils.PAlign.ALIGN_LEFT, 0);
+
+        utils.drawText(area_start_x_4_3 + 4, top_left_y + row_height[0] * 4, top_right_x,
+                top_left_y + row_height[0] * 5, "余量：" + printData.getLast_qty(),
                 24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
 
 
         // 打印表格头
-        utils.drawText(area_start_x_4_1, top_left_y + row_height[0] * 4, area_start_x_4_2,
-                top_left_y + row_height[0] * 5, "种区",
+        utils.drawText(area_start_x_4_1, top_left_y + row_height[0] * 5, area_start_x_4_2,
+                top_left_y + row_height[0] * 6, "种区",
                 24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
 
-        utils.drawText(area_start_x_4_2, top_left_y + row_height[0] * 4,
-                area_start_x_4_3, top_left_y + row_height[0] * 5, "种号",
+        utils.drawText(area_start_x_4_2, top_left_y + row_height[0] * 5,
+                area_start_x_4_3, top_left_y + row_height[0] * 6, "种号",
                 24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
-        utils.drawText(area_start_x_4_3, top_left_y + row_height[0] * 4,
-                area_start_x_4_4, top_left_y + row_height[0] * 5, "应播数量",
+        utils.drawText(area_start_x_4_3, top_left_y + row_height[0] * 5,
+                area_start_x_4_4, top_left_y + row_height[0] * 6, "应播数量",
                 24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
-        utils.drawText(area_start_x_4_4, top_left_y + row_height[0] * 4,
-                top_right_x, top_left_y + row_height[0] * 5, " 实播数量",
+        utils.drawText(area_start_x_4_4, top_left_y + row_height[0] * 5,
+                top_right_x, top_left_y + row_height[0] * 6, " 实播数量",
                 24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
 
         //打印表格内容
-        List<PrintData2.TraySowDtlsBean> traySowDtls = printData.getTraySowDtls();
+//        List<PrintData2.TraySowDtlsBean> traySowDtls = printData.getTraySowDtls();
         for (int index = 0; index < traySowDtls.size(); index++) {
-            utils.drawText(area_start_x_4_1, top_left_y + row_height[0] * (5 + index), area_start_x_4_2,
-                    top_left_y + row_height[0] * (6 + index), traySowDtls.get(index).getZone_id(),
+            utils.drawText(area_start_x_4_1, top_left_y + row_height[0] * (6 + index), area_start_x_4_2,
+                    top_left_y + row_height[0] * (7 + index), traySowDtls.get(index).getZone_id(),
                     24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
 
-            utils.drawText(area_start_x_4_2, top_left_y + row_height[0] * (5 + index),
-                    area_start_x_4_3, top_left_y + row_height[0] * (6 + index), traySowDtls.get(index).getSow_id(),
+            utils.drawText(area_start_x_4_2, top_left_y + row_height[0] * (6 + index),
+                    area_start_x_4_3, top_left_y + row_height[0] * (7 + index), traySowDtls.get(index).getSow_id(),
                     24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
-            utils.drawText(area_start_x_4_3, top_left_y + row_height[0] * (5 + index),
-                    area_start_x_4_4, top_left_y + row_height[0] * (6 + index), traySowDtls.get(index).getQty(),
+            utils.drawText(area_start_x_4_3, top_left_y + row_height[0] * (6 + index),
+                    area_start_x_4_4, top_left_y + row_height[0] * (7 + index), traySowDtls.get(index).getQty(),
                     24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
-            utils.drawText(area_start_x_4_4, top_left_y + row_height[0] * (5 + index),
-                    top_right_x, top_left_y + row_height[0] * (6 + index), " ",
+            utils.drawText(area_start_x_4_4, top_left_y + row_height[0] * (6 + index),
+                    top_right_x, top_left_y + row_height[0] * (7 + index), " ",
                     24, CanvasUtils.PAlign.ALIGN_CENTER, 0);
         }
     }
 
     private void drawHorizontalSeparator(CanvasUtils utils, int lines, int start_x, int end_x) {
 
-        int temp = top_left_y + row_height[0] * 4;
+        int temp = top_left_y + row_height[0] * 5;
         for (int i = 0; i < lines; i++) {
             temp += row_height[0];
             utils.drawLine(start_x, temp, end_x, temp);
@@ -145,7 +171,7 @@ public class PrintTemplate2 {
     private void drawVerticalSeparator(CanvasUtils utils) {
 
         int start_x = top_left_x + border_width / 4;
-        int start_y = top_left_y + row_height[0] * 4;
+        int start_y = top_left_y + row_height[0] * 5;
         int end_x = start_x;
         int end_y = bottom_left_y;
 
@@ -164,7 +190,7 @@ public class PrintTemplate2 {
     }
 
     private void drawBox(CanvasUtils utils, int lines) {
-        utils.drawRectangle(top_left_x, top_left_y + row_height[0] * 4, bottom_right_x, bottom_right_y);
+        utils.drawRectangle(top_left_x, top_left_y + row_height[0] * 5, bottom_right_x, bottom_right_y);
         drawHorizontalSeparator(utils, lines, top_left_x, bottom_right_x);
     }
 

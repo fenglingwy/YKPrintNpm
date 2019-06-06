@@ -34,7 +34,7 @@ public class CanvasUtils {
     public static final int FONT_SIZE_BIG = 48;
 
     public CanvasUtils(int width, int height) {
-        this.mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        this.mBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ALPHA_8);
         this.mCanvas = new Canvas(this.mBitmap);
         this.mPaint = new Paint();
         this.mPaint.setStyle(Paint.Style.STROKE);
@@ -152,6 +152,7 @@ public class CanvasUtils {
     public void drawText(int area_start_x, int area_start_y, int area_end_x, int area_end_y, String text, int fontSize, PAlign alignCenter, int bold) {
         mCanvas.save();
         mTextPaint.setTextSize(fontSize);
+        mTextPaint.setFakeBoldText(bold==1);
         Layout.Alignment alignment = Layout.Alignment.ALIGN_NORMAL;
         switch (alignCenter) {
             case ALIGN_LEFT:
