@@ -1,0 +1,14 @@
+{
+  "name": "react-native-print-sd60prt",
+  "version": "1.0.3",
+  "description": "激荡蓝牙打印模块SD60PRT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "print"
+  ],
+  "author": "WY",
+  "license": "ISC"
+}
