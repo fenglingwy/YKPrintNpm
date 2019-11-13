@@ -8,7 +8,6 @@ import com.blankj.utilcode.util.ToastUtils;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ReadableMap;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.jd.ykposprint.bt.BluetoothSearchActivity;
@@ -116,7 +115,7 @@ public class BTPrinterModule extends ReactContextBaseJavaModule {
                             case 1:
                                 OmsOrder omsOrder = new Gson().fromJson(data, OmsOrder.class);
                                 OrderPrintDataMaker1 maker = new OrderPrintDataMaker1();
-                                List<byte[]> printData = maker.getPrintData(omsOrder);
+                                List<byte[]> printData = maker.getPrintData(omsOrder,getReactApplicationContext());
                                 for (byte[] d:printData) {
                                     BluetoothUtils.bluetoothSocket.getOutputStream().write(d);
                                     BluetoothUtils.bluetoothSocket.getOutputStream().flush();
@@ -135,6 +134,7 @@ public class BTPrinterModule extends ReactContextBaseJavaModule {
                         ToastUtils.showShort("打印数据解析异常!");
                     } catch (IOException e) {
                         e.printStackTrace();
+                        ToastUtils.showShort("打印异常!");
                     }
                 }
             }.start();

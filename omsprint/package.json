@@ -1,6 +1,6 @@
 {
   "name": "react-native-yk-oms-print",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "OMS蓝牙打印模块",
   "main": "index.js",
   "scripts": {

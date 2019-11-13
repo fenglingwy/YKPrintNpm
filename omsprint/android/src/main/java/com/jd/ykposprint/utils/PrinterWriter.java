@@ -345,7 +345,7 @@ public abstract class PrinterWriter {
         return decodeBitmapToDataList;
     }
 
-    private Bitmap scalingBitmap(Bitmap image, int maxWidth) {
+    public Bitmap scalingBitmap(Bitmap image, int maxWidth) {
         if (image == null || image.getWidth() <= 0 || image.getHeight() <= 0) {
             return null;
         }
