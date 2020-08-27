@@ -1,6 +1,6 @@
 {
   "name": "react-native-yk-pos-print",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "激荡pos打印模块",
   "main": "index.js",
   "scripts": {

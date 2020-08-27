@@ -1,7 +1,7 @@
 {
   "name": "react-native-yk-oms-print",
-  "version": "1.0.3",
-  "description": "OMS蓝牙打印模块",
+  "version": "1.0.9",
+  "description": "OMS+POS蓝牙打印模块",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

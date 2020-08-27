@@ -2,4 +2,23 @@
     package="com.jd.ykposprint" >
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <receiver
+            android:name=".bt.BTReceiver"
+            android:enabled="true"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name = "android.bluetooth.device.action.ACL_CONNECTED"/>
+                <action android:name = "android.bluetooth.device.action.ACL_DISCONNECTED"/>
+            </intent-filter>
+
+        </receiver>
+
+        <activity android:name=".bt.BluetoothSearchActivity" />
+    </application>
 </manifest>
